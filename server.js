@@ -87,15 +87,13 @@ async function startServer() {
   try {
     await connectDB();
 
-    // Auto-seed in development mode if database is empty
-    if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
-      const User = require('./models/User');
-      const userCount = await User.countDocuments();
-      if (userCount === 0) {
-        console.log('🌱 Database is empty. Running auto-seeding for local environment...');
-        const seedDatabase = require('./utils/seedData');
-        await seedDatabase();
-      }
+    // Auto-seed if database is empty (so the app is not locked on fresh deploy)
+    const User = require('./models/User');
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      console.log('🌱 Database is empty. Running auto-seeding...');
+      const seedDatabase = require('./utils/seedData');
+      await seedDatabase();
     }
 
     app.listen(PORT, () => {
