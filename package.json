@@ -1,0 +1,47 @@
+{
+  "name": "smart-voice-attendance-system",
+  "version": "1.0.0",
+  "description": "Smart Voice Based Attendance System — contactless attendance tracking using speech recognition",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./public/css/style.css --minify",
+    "dev": "concurrently \"npx @tailwindcss/cli -i ./src/input.css -o ./public/css/style.css --watch\" \"nodemon server.js\"",
+    "build:css": "npx @tailwindcss/cli -i ./src/input.css -o ./public/css/style.css --minify",
+    "seed": "node utils/seedData.js"
+  },
+  "keywords": [
+    "attendance",
+    "voice-recognition",
+    "speech-to-text",
+    "web-speech-api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.1",
+    "fuzzball": "^2.1.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb-memory-server": "^11.1.0",
+    "mongoose": "^8.7.0",
+    "morgan": "^1.10.0",
+    "natural": "^8.0.1",
+    "nodemailer": "^6.9.15"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "concurrently": "^9.0.1",
+    "nodemon": "^3.1.7",
+    "tailwindcss": "^4.1.0"
+  }
+}

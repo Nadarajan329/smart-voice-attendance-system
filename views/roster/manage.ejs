@@ -1,0 +1,198 @@
+<% const currentPage = 'roster'; %>
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/sidebar') %>
+
+<style>
+  @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+  #overridePanel.open { animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  #overridePanel.closing { animation: slideOutRight 0.25s ease-in forwards; }
+</style>
+
+<main class="lg:ml-[260px] pt-16 min-h-screen">
+  <div class="p-4 sm:p-6 lg:p-8 page-enter">
+
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Roster Management</h1>
+        <span id="rosterTotalBadge" class="badge badge-info px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">0 Users</span>
+      </div>
+      <div class="mt-3 sm:mt-0 flex items-center gap-2">
+        <button id="rosterExportCsvBtn" class="btn-secondary inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.08] transition-all duration-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-4 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div class="lg:col-span-2 relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="rosterSearchInput" placeholder="Search by name or ID..." class="input-field w-full pl-10 pr-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-600" />
+        </div>
+        <select id="rosterDeptFilter" class="input-field px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+          <option value="" class="bg-[#1e293b]">All Departments</option>
+          <option value="engineering" class="bg-[#1e293b]">Engineering</option>
+          <option value="science" class="bg-[#1e293b]">Science</option>
+          <option value="arts" class="bg-[#1e293b]">Arts</option>
+          <option value="business" class="bg-[#1e293b]">Business</option>
+        </select>
+        <select id="rosterStatusFilter" class="input-field px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+          <option value="" class="bg-[#1e293b]">All Voice Status</option>
+          <option value="enrolled" class="bg-[#1e293b]">Enrolled</option>
+          <option value="pending" class="bg-[#1e293b]">Pending</option>
+          <option value="failed" class="bg-[#1e293b]">Failed</option>
+        </select>
+        <button id="rosterSearchBtn" class="btn-primary px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white text-sm font-semibold shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] transition-all duration-200">
+          Search
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="table-modern w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06] bg-white/[0.02]">
+              <th class="py-3.5 px-4 text-left w-10">
+                <input type="checkbox" id="rosterSelectAll" class="w-4 h-4 rounded border-white/20 bg-white/[0.04] text-indigo-500 focus:ring-indigo-500/20 cursor-pointer" />
+              </th>
+              <th class="py-3.5 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
+              <th class="py-3.5 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Employee ID</th>
+              <th class="py-3.5 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden md:table-cell">Department</th>
+              <th class="py-3.5 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Voice Status</th>
+              <th class="py-3.5 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden lg:table-cell">Attendance %</th>
+              <th class="py-3.5 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden xl:table-cell">Last Attendance</th>
+              <th class="py-3.5 px-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rosterTableBody" class="divide-y divide-white/[0.04]">
+            <!-- Skeleton rows -->
+            <% for (let i = 0; i < 5; i++) { %>
+            <tr class="animate-pulse">
+              <td class="py-4 px-4"><div class="w-4 h-4 rounded bg-white/[0.04]"></div></td>
+              <td class="py-4 px-4"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-white/[0.04]"></div><div class="h-4 w-24 rounded bg-white/[0.04]"></div></div></td>
+              <td class="py-4 px-4"><div class="h-4 w-16 rounded bg-white/[0.04]"></div></td>
+              <td class="py-4 px-4 hidden md:table-cell"><div class="h-4 w-20 rounded bg-white/[0.04]"></div></td>
+              <td class="py-4 px-4"><div class="h-5 w-16 rounded-full bg-white/[0.04]"></div></td>
+              <td class="py-4 px-4 hidden lg:table-cell"><div class="h-4 w-12 rounded bg-white/[0.04]"></div></td>
+              <td class="py-4 px-4 hidden xl:table-cell"><div class="h-4 w-20 rounded bg-white/[0.04]"></div></td>
+              <td class="py-4 px-4"><div class="h-4 w-20 rounded bg-white/[0.04] ml-auto"></div></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-white/[0.06]">
+        <p id="rosterPaginationInfo" class="text-xs text-slate-500">Showing 0 of 0 users</p>
+        <div class="flex items-center gap-1" id="rosterPaginationControls">
+          <button id="rosterPrevPage" class="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <div id="rosterPageNumbers" class="flex items-center gap-1"></div>
+          <button id="rosterNextPage" class="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div id="rosterBulkBar" class="hidden fixed bottom-6 left-1/2 lg:left-[calc(50%+130px)] -translate-x-1/2 z-30">
+      <div class="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/[0.1] bg-[#1e293b]/95 backdrop-blur-2xl shadow-2xl shadow-black/40">
+        <span id="rosterSelectedCount" class="text-sm font-semibold text-white">0 selected</span>
+        <div class="w-px h-6 bg-white/[0.1]"></div>
+        <button id="rosterBulkNotifyBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          Notify
+        </button>
+        <button id="rosterBulkExportBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Override Panel -->
+<div id="overridePanelOverlay" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm hidden"></div>
+<div id="overridePanel" class="fixed top-0 right-0 z-50 w-full sm:w-[420px] h-full bg-[#172033]/98 backdrop-blur-2xl border-l border-white/[0.06] shadow-2xl shadow-black/40 transform translate-x-full overflow-y-auto hidden">
+  <!-- Panel Header -->
+  <div class="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-[#172033]/95 backdrop-blur-xl">
+    <h3 class="text-lg font-bold text-white">Manual Override</h3>
+    <button id="overridePanelCloseBtn" class="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all" aria-label="Close panel">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Panel Body -->
+  <div class="p-6 space-y-5">
+    <!-- User Info -->
+    <div id="overrideUserInfo" class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.04]">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-sm font-bold text-white" id="overrideUserAvatar">--</div>
+      <div>
+        <p class="text-sm font-semibold text-white" id="overrideUserName">Select a user</p>
+        <p class="text-xs text-slate-500" id="overrideUserId">---</p>
+      </div>
+    </div>
+
+    <!-- Session Selector -->
+    <div>
+      <label for="overrideSessionSelect" class="block text-sm font-medium text-slate-300 mb-2">Session</label>
+      <select id="overrideSessionSelect" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+        <option value="" class="bg-[#1e293b]">Select session...</option>
+      </select>
+    </div>
+
+    <!-- Status -->
+    <div>
+      <label class="block text-sm font-medium text-slate-300 mb-2">Status Override</label>
+      <div class="space-y-2">
+        <label class="flex items-center gap-3 p-3 rounded-xl border border-white/[0.06] bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-all has-[:checked]:border-emerald-500/30 has-[:checked]:bg-emerald-500/[0.05]">
+          <input type="radio" name="overrideStatus" value="present" class="w-4 h-4 text-emerald-500 border-white/20 bg-white/[0.04] focus:ring-emerald-500/20" id="overrideStatusPresent" />
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="text-sm font-medium text-white">Present</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-xl border border-white/[0.06] bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-all has-[:checked]:border-red-500/30 has-[:checked]:bg-red-500/[0.05]">
+          <input type="radio" name="overrideStatus" value="absent" class="w-4 h-4 text-red-500 border-white/20 bg-white/[0.04] focus:ring-red-500/20" id="overrideStatusAbsent" />
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-sm font-medium text-white">Absent</span>
+          </div>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-xl border border-white/[0.06] bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-all has-[:checked]:border-amber-500/30 has-[:checked]:bg-amber-500/[0.05]">
+          <input type="radio" name="overrideStatus" value="excused" class="w-4 h-4 text-amber-500 border-white/20 bg-white/[0.04] focus:ring-amber-500/20" id="overrideStatusExcused" />
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span class="text-sm font-medium text-white">Excused</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Reason -->
+    <div>
+      <label for="overrideReason" class="block text-sm font-medium text-slate-300 mb-2">Reason</label>
+      <textarea id="overrideReason" rows="3" placeholder="Provide a reason for the override..." class="input-field w-full px-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-600 resize-none"></textarea>
+    </div>
+
+    <!-- Submit -->
+    <button id="overrideSubmitBtn" class="btn-primary w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+      Submit Override
+    </button>
+  </div>
+</div>
+
+<script src="/js/rosterManager.js"></script>
+<%- include('../partials/footer') %>

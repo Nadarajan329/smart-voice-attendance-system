@@ -1,0 +1,228 @@
+<% const currentPage = 'profile'; %>
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/sidebar') %>
+
+<main class="lg:ml-[260px] pt-16 min-h-screen">
+  <div class="p-4 sm:p-6 lg:p-8 page-enter">
+
+    <!-- Profile Header -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 mb-8">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+        <!-- Avatar -->
+        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-2xl sm:text-3xl font-extrabold text-white shadow-2xl shadow-indigo-500/30 shrink-0">
+          <span id="profileAvatarInitials"><%= typeof user !== 'undefined' && user ? (user.firstName || '').charAt(0).toUpperCase() + (user.lastName || '').charAt(0).toUpperCase() : '??' %></span>
+        </div>
+        <div class="text-center sm:text-left">
+          <h1 class="text-2xl font-extrabold text-white" id="profileFullName"><%= typeof user !== 'undefined' && user ? user.firstName + ' ' + user.lastName : 'User' %></h1>
+          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
+            <span class="badge badge-info inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 capitalize" id="profileRoleBadge"><%= typeof user !== 'undefined' && user ? user.role : 'user' %></span>
+            <span class="text-xs text-slate-500" id="profileDepartment"><%= typeof user !== 'undefined' && user && user.department ? user.department : 'No Department' %></span>
+          </div>
+          <p class="text-sm text-slate-500 mt-1" id="profileEmail"><%= typeof user !== 'undefined' && user ? user.email : '' %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+      <!-- Profile Details (Editable) -->
+      <div class="lg:col-span-2 glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-bold text-white">Profile Details</h2>
+          <button id="profileEditToggle" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Edit Profile</button>
+        </div>
+        <form id="profileForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="profileFirstName" class="block text-sm font-medium text-slate-300 mb-1.5">First Name</label>
+              <input type="text" id="profileFirstName" value="<%= typeof user !== 'undefined' && user ? user.firstName : '' %>" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50" disabled />
+            </div>
+            <div>
+              <label for="profileLastName" class="block text-sm font-medium text-slate-300 mb-1.5">Last Name</label>
+              <input type="text" id="profileLastName" value="<%= typeof user !== 'undefined' && user ? user.lastName : '' %>" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all disabled:opacity-50" disabled />
+            </div>
+          </div>
+          <div>
+            <label for="profileEmailField" class="block text-sm font-medium text-slate-300 mb-1.5">Email <span class="text-xs text-slate-600">(read-only)</span></label>
+            <input type="email" id="profileEmailField" value="<%= typeof user !== 'undefined' && user ? user.email : '' %>" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-slate-500 text-sm outline-none cursor-not-allowed" disabled readonly />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="profilePhone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone Number</label>
+              <input type="tel" id="profilePhone" value="" placeholder="+1 (555) 000-0000" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-600 disabled:opacity-50" disabled />
+            </div>
+            <div>
+              <label for="profileParentContact" class="block text-sm font-medium text-slate-300 mb-1.5">Parent/Guardian Contact</label>
+              <input type="tel" id="profileParentContact" value="" placeholder="+1 (555) 000-0000" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-600 disabled:opacity-50" disabled />
+            </div>
+          </div>
+          <button type="submit" id="profileSaveBtn" class="hidden btn-primary px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] transition-all duration-200">
+            Save Changes
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Attendance Donut -->
+        <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+          <h3 class="text-sm font-bold text-white mb-4">Attendance Overview</h3>
+          <div class="relative w-44 h-44 mx-auto mb-4">
+            <canvas id="attendanceDonut"></canvas>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-3xl font-extrabold text-white" id="profileAttendancePercent">0</span>
+              <span class="text-xs text-slate-500">% Present</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-4 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span class="text-slate-400">Present</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              <span class="text-slate-400">Absent</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span class="text-slate-400">Late</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Voice Enrollment Status -->
+        <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+          <h3 class="text-sm font-bold text-white mb-4">Voice Enrollment</h3>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm text-slate-400">Status</span>
+            <span id="profileVoiceStatus" class="badge badge-success px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Enrolled</span>
+          </div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-sm text-slate-400">Samples</span>
+            <span id="profileVoiceSamples" class="text-sm font-semibold text-white">3/3</span>
+          </div>
+          <a href="/enrollment" id="profileReEnrollBtn" class="btn-secondary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm font-medium text-slate-300 hover:text-white hover:bg-white/[0.08] transition-all duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Re-Enroll Voice
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Log -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-lg font-bold text-white">Attendance Log</h2>
+      </div>
+      <div class="overflow-x-auto -mx-6 px-6">
+        <table class="table-modern w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Session</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden sm:table-cell">Time</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden md:table-cell">Method</th>
+            </tr>
+          </thead>
+          <tbody id="profileAttendanceLog" class="divide-y divide-white/[0.04]">
+            <tr>
+              <td colspan="5" class="py-8 text-center text-sm text-slate-600">Loading attendance log...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Attendance Donut Chart
+  const donutCtx = document.getElementById('attendanceDonut');
+  if (donutCtx) {
+    new Chart(donutCtx.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Present', 'Absent', 'Late'],
+        datasets: [{
+          data: [78, 12, 10],
+          backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+          borderColor: ['#10b98133', '#ef444433', '#f59e0b33'],
+          borderWidth: 2,
+          spacing: 3,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        cutout: '75%',
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e293b', titleColor: '#e2e8f0', bodyColor: '#94a3b8', borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, padding: 12, cornerRadius: 10, displayColors: true, boxPadding: 4 } }
+      }
+    });
+    // Animate percent
+    const percentEl = document.getElementById('profileAttendancePercent');
+    if (percentEl) { let c = 0; const t = 78; const iv = setInterval(() => { c += 1; percentEl.textContent = c; if (c >= t) clearInterval(iv); }, 20); }
+  }
+
+  // Edit toggle
+  const editBtn = document.getElementById('profileEditToggle');
+  const saveBtn = document.getElementById('profileSaveBtn');
+  const fields = ['profileFirstName', 'profileLastName', 'profilePhone', 'profileParentContact'];
+  let editing = false;
+
+  if (editBtn) {
+    editBtn.addEventListener('click', function() {
+      editing = !editing;
+      fields.forEach(id => { const f = document.getElementById(id); if (f) f.disabled = !editing; });
+      if (saveBtn) saveBtn.classList.toggle('hidden', !editing);
+      editBtn.textContent = editing ? 'Cancel' : 'Edit Profile';
+    });
+  }
+
+  // Profile form submit
+  const profileForm = document.getElementById('profileForm');
+  if (profileForm) {
+    profileForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      try {
+        const data = { firstName: document.getElementById('profileFirstName')?.value, lastName: document.getElementById('profileLastName')?.value, phone: document.getElementById('profilePhone')?.value, parentContact: document.getElementById('profileParentContact')?.value };
+        if (typeof apiRequest === 'function') {
+          await apiRequest('/api/users/profile', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        }
+        if (typeof showToast === 'function') showToast('Profile updated successfully', 'success');
+        editing = false;
+        fields.forEach(id => { const f = document.getElementById(id); if (f) f.disabled = true; });
+        if (saveBtn) saveBtn.classList.add('hidden');
+        if (editBtn) editBtn.textContent = 'Edit Profile';
+      } catch (err) {
+        if (typeof showToast === 'function') showToast('Failed to update profile', 'error');
+      }
+    });
+  }
+
+  // Load attendance log
+  async function loadAttendanceLog() {
+    try {
+      const fetcher = typeof apiRequest === 'function' ? apiRequest : fetch;
+      const res = await fetcher('/api/attendance/my-log');
+      if (!res.ok) throw new Error('Failed');
+      const data = await res.json();
+      const tbody = document.getElementById('profileAttendanceLog');
+      if (!tbody || !data.records || !data.records.length) return;
+      const statusBadge = (s) => {
+        const map = { present: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', absent: 'bg-red-500/15 text-red-400 border-red-500/20', late: 'bg-amber-500/15 text-amber-400 border-amber-500/20', excused: 'bg-sky-500/15 text-sky-400 border-sky-500/20' };
+        return `<span class="badge px-2 py-0.5 rounded-full text-xs font-semibold border ${map[s] || map.present} capitalize">${s}</span>`;
+      };
+      tbody.innerHTML = data.records.map(r => `<tr class="hover:bg-white/[0.02] transition-colors"><td class="py-3 px-4 text-sm text-white font-medium">${r.session || '-'}</td><td class="py-3 px-4 text-sm text-slate-400">${r.date || '-'}</td><td class="py-3 px-4 text-sm text-slate-400 hidden sm:table-cell">${r.time || '-'}</td><td class="py-3 px-4">${statusBadge(r.status)}</td><td class="py-3 px-4 text-sm text-slate-500 hidden md:table-cell capitalize">${r.method || 'voice'}</td></tr>`).join('');
+    } catch (e) { /* silent */ }
+  }
+  loadAttendanceLog();
+});
+</script>
+<%- include('../partials/footer') %>

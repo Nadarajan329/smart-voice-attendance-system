@@ -1,0 +1,190 @@
+<% const currentPage = 'sessions'; %>
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/sidebar') %>
+
+<main class="lg:ml-[260px] pt-16 min-h-screen">
+  <div class="p-4 sm:p-6 lg:p-8 page-enter">
+
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Session Management</h1>
+        <p class="mt-1 text-sm text-slate-400">Create, configure, and manage attendance sessions</p>
+      </div>
+    </div>
+
+    <!-- 2-column layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+      <!-- Create Session Form -->
+      <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-600/20 border border-indigo-500/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          </div>
+          <h2 class="text-lg font-bold text-white">Create Session</h2>
+        </div>
+
+        <form id="createSessionForm" class="space-y-4">
+          <!-- Title -->
+          <div>
+            <label for="sessionTitle" class="block text-sm font-medium text-slate-300 mb-1.5">Session Title</label>
+            <input type="text" id="sessionTitle" placeholder="e.g., CS101 - Morning Lecture" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-600" required />
+          </div>
+
+          <!-- Department -->
+          <div>
+            <label for="sessionDepartment" class="block text-sm font-medium text-slate-300 mb-1.5">Department</label>
+            <select id="sessionDepartment" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all" required>
+              <option value="" class="bg-[#1e293b]">Select department</option>
+              <option value="engineering" class="bg-[#1e293b]">Engineering</option>
+              <option value="science" class="bg-[#1e293b]">Science</option>
+              <option value="arts" class="bg-[#1e293b]">Arts</option>
+              <option value="business" class="bg-[#1e293b]">Business</option>
+            </select>
+          </div>
+
+          <!-- Date + Times -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label for="sessionDate" class="block text-sm font-medium text-slate-300 mb-1.5">Date</label>
+              <input type="date" id="sessionDate" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all" required />
+            </div>
+            <div>
+              <label for="sessionStartTime" class="block text-sm font-medium text-slate-300 mb-1.5">Start Time</label>
+              <input type="time" id="sessionStartTime" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all" required />
+            </div>
+            <div>
+              <label for="sessionEndTime" class="block text-sm font-medium text-slate-300 mb-1.5">End Time</label>
+              <input type="time" id="sessionEndTime" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all" required />
+            </div>
+          </div>
+
+          <!-- Eligible Students -->
+          <div>
+            <label for="sessionStudents" class="block text-sm font-medium text-slate-300 mb-1.5">Eligible Students</label>
+            <div class="relative">
+              <input type="text" id="sessionStudentSearch" placeholder="Search students..." class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-white text-sm outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder-slate-600" />
+              <div id="sessionStudentsList" class="hidden absolute top-full left-0 right-0 mt-1 max-h-40 overflow-y-auto rounded-xl border border-white/[0.08] bg-[#1e293b]/95 backdrop-blur-2xl shadow-xl z-20"></div>
+            </div>
+            <div id="sessionSelectedStudents" class="flex flex-wrap gap-1.5 mt-2"></div>
+          </div>
+
+          <!-- Recurrence -->
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-white">Recurring Session</p>
+                <p class="text-xs text-slate-500 mt-0.5">Repeat on a schedule</p>
+              </div>
+              <button type="button" id="sessionRecurrenceToggle" class="toggle-switch relative w-11 h-6 rounded-full bg-white/[0.08] border border-white/[0.1] transition-colors duration-200 cursor-pointer" role="switch" aria-checked="false">
+                <div class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-slate-400 shadow transition-all duration-200"></div>
+              </button>
+            </div>
+            <div id="sessionRecurrenceOptions" class="hidden mt-3 pt-3 border-t border-white/[0.06]">
+              <select id="sessionRecurrencePattern" class="input-field w-full px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-sm text-slate-300 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+                <option value="daily" class="bg-[#1e293b]">Daily (weekdays)</option>
+                <option value="weekly" class="bg-[#1e293b]">Weekly</option>
+                <option value="biweekly" class="bg-[#1e293b]">Bi-weekly</option>
+                <option value="monthly" class="bg-[#1e293b]">Monthly</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div>
+                <p class="text-sm font-medium text-white">Late Threshold</p>
+                <p class="text-xs text-slate-500">Minutes after start considered late</p>
+              </div>
+              <input type="number" id="sessionLateThreshold" min="0" max="60" value="15" class="w-16 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] text-white text-sm text-center outline-none focus:border-indigo-500/50 transition-all" />
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div>
+                <p class="text-sm font-medium text-white">Allow Manual Override</p>
+                <p class="text-xs text-slate-500">Instructors can override status</p>
+              </div>
+              <button type="button" id="sessionManualOverrideToggle" class="toggle-switch active relative w-11 h-6 rounded-full bg-indigo-500 border border-indigo-400/30 transition-colors duration-200 cursor-pointer" role="switch" aria-checked="true">
+                <div class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200"></div>
+              </button>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div>
+                <p class="text-sm font-medium text-white">Auto-Close Session</p>
+                <p class="text-xs text-slate-500">Automatically close at end time</p>
+              </div>
+              <button type="button" id="sessionAutoCloseToggle" class="toggle-switch active relative w-11 h-6 rounded-full bg-indigo-500 border border-indigo-400/30 transition-colors duration-200 cursor-pointer" role="switch" aria-checked="true">
+                <div class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200"></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Create Button -->
+          <button type="submit" id="sessionCreateBtn" class="btn-primary w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Create Session
+          </button>
+        </form>
+      </div>
+
+      <!-- Upcoming Sessions -->
+      <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-green-600/20 border border-emerald-500/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h2 class="text-lg font-bold text-white">Upcoming Sessions</h2>
+          </div>
+          <button id="sessionRefreshBtn" class="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all" aria-label="Refresh">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+        </div>
+        <div id="upcomingSessionsList" class="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+          <!-- Skeleton -->
+          <div class="animate-pulse space-y-3">
+            <div class="h-28 rounded-xl bg-white/[0.04]"></div>
+            <div class="h-28 rounded-xl bg-white/[0.04]"></div>
+            <div class="h-28 rounded-xl bg-white/[0.04]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session History -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-500/20 to-slate-600/20 border border-slate-500/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h2 class="text-lg font-bold text-white">Session History</h2>
+        </div>
+      </div>
+      <div class="overflow-x-auto -mx-6 px-6">
+        <table class="table-modern w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Title</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden sm:table-cell">Duration</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Attendance</th>
+              <th class="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+            </tr>
+          </thead>
+          <tbody id="sessionHistoryBody" class="divide-y divide-white/[0.04]">
+            <tr>
+              <td colspan="5" class="py-8 text-center text-sm text-slate-600">Loading session history...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="/js/sessionManager.js"></script>
+<%- include('../partials/footer') %>

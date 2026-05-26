@@ -1,0 +1,127 @@
+<!-- Sidebar Overlay (Mobile) -->
+<div id="sidebarOverlay" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden lg:hidden" aria-hidden="true"></div>
+
+<!-- Sidebar -->
+<aside id="appSidebar" class="fixed top-0 left-0 z-40 w-[260px] h-screen pt-16 border-r border-white/[0.06] bg-[#172033]/95 backdrop-blur-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out flex flex-col">
+
+  <!-- Sidebar Brand (visible on mobile only, desktop brand is in navbar) -->
+  <div class="px-5 py-5 border-b border-white/[0.06] lg:hidden">
+    <a href="/dashboard" class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+        </svg>
+      </div>
+      <span class="text-lg font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">VoiceTrack</span>
+    </a>
+  </div>
+
+  <!-- Navigation Links -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1" aria-label="Main navigation">
+
+    <p class="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">Main</p>
+
+    <!-- Dashboard -->
+    <a href="/dashboard" id="sidebarLinkDashboard"
+       class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'active bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-white border border-indigo-500/20 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' %>">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30' : 'bg-white/[0.04] text-slate-500 group-hover:bg-white/[0.08] group-hover:text-slate-300' %>">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+        </svg>
+      </div>
+      Dashboard
+    </a>
+
+    <!-- Attendance Station -->
+    <a href="/attendance" id="sidebarLinkAttendance"
+       class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group <%= typeof currentPage !== 'undefined' && currentPage === 'attendance' ? 'active bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-white border border-indigo-500/20 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' %>">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 <%= typeof currentPage !== 'undefined' && currentPage === 'attendance' ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30' : 'bg-white/[0.04] text-slate-500 group-hover:bg-white/[0.08] group-hover:text-slate-300' %>">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+        </svg>
+      </div>
+      Attendance Station
+    </a>
+
+    <!-- Voice Enrollment -->
+    <a href="/enrollment" id="sidebarLinkEnrollment"
+       class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group <%= typeof currentPage !== 'undefined' && currentPage === 'enrollment' ? 'active bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-white border border-indigo-500/20 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' %>">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 <%= typeof currentPage !== 'undefined' && currentPage === 'enrollment' ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30' : 'bg-white/[0.04] text-slate-500 group-hover:bg-white/[0.08] group-hover:text-slate-300' %>">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+        </svg>
+      </div>
+      Voice Enrollment
+    </a>
+
+    <% if (typeof user !== 'undefined' && user && (user.role === 'admin' || user.role === 'instructor')) { %>
+    <p class="px-3 mt-5 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">Management</p>
+
+    <!-- Roster Management -->
+    <a href="/roster" id="sidebarLinkRoster"
+       class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group <%= typeof currentPage !== 'undefined' && currentPage === 'roster' ? 'active bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-white border border-indigo-500/20 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' %>">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 <%= typeof currentPage !== 'undefined' && currentPage === 'roster' ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30' : 'bg-white/[0.04] text-slate-500 group-hover:bg-white/[0.08] group-hover:text-slate-300' %>">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+      </div>
+      Roster Management
+    </a>
+
+    <!-- Sessions -->
+    <a href="/sessions" id="sidebarLinkSessions"
+       class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group <%= typeof currentPage !== 'undefined' && currentPage === 'sessions' ? 'active bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-white border border-indigo-500/20 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' %>">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 <%= typeof currentPage !== 'undefined' && currentPage === 'sessions' ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30' : 'bg-white/[0.04] text-slate-500 group-hover:bg-white/[0.08] group-hover:text-slate-300' %>">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      Sessions
+    </a>
+    <% } %>
+
+    <p class="px-3 mt-5 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">Account</p>
+
+    <!-- My Profile -->
+    <a href="/profile" id="sidebarLinkProfile"
+       class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group <%= typeof currentPage !== 'undefined' && currentPage === 'profile' ? 'active bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-white border border-indigo-500/20 shadow-lg shadow-indigo-500/5' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]' %>">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 <%= typeof currentPage !== 'undefined' && currentPage === 'profile' ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/30' : 'bg-white/[0.04] text-slate-500 group-hover:bg-white/[0.08] group-hover:text-slate-300' %>">
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </div>
+      My Profile
+    </a>
+  </nav>
+
+  <!-- Bottom User Info Card -->
+  <% if (typeof user !== 'undefined' && user) { %>
+  <div class="p-3 border-t border-white/[0.06]">
+    <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.04]">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-sm font-bold text-white shadow-md shadow-indigo-500/20 shrink-0">
+        <%= user.firstName ? user.firstName.charAt(0).toUpperCase() : '' %><%= user.lastName ? user.lastName.charAt(0).toUpperCase() : '' %>
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-slate-200 truncate"><%= user.firstName %> <%= user.lastName %></p>
+        <p class="text-[11px] text-slate-500 capitalize"><%= user.role %></p>
+      </div>
+    </div>
+  </div>
+  <% } %>
+</aside>
+
+<!-- Sidebar Scripts -->
+<script>
+(function() {
+  const overlay = document.getElementById('sidebarOverlay');
+  const sidebar = document.getElementById('appSidebar');
+
+  if (overlay && sidebar) {
+    overlay.addEventListener('click', function() {
+      sidebar.classList.add('-translate-x-full');
+      sidebar.classList.remove('translate-x-0');
+      overlay.classList.add('hidden');
+    });
+  }
+})();
+</script>

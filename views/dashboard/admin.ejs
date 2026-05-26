@@ -1,0 +1,188 @@
+<% const currentPage = 'dashboard'; %>
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/sidebar') %>
+
+<main class="lg:ml-[260px] pt-16 min-h-screen">
+  <div class="p-4 sm:p-6 lg:p-8 page-enter">
+
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Dashboard</h1>
+        <p class="mt-1 text-sm text-slate-400">Welcome back, <span class="text-indigo-400 font-medium"><%= typeof user !== 'undefined' && user ? user.firstName : 'Admin' %></span></p>
+      </div>
+      <div class="mt-3 sm:mt-0 flex items-center gap-2 text-sm text-slate-500">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span id="dashboardLastUpdated">Updated just now</span>
+      </div>
+    </div>
+
+    <!-- Stat Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+
+      <!-- Total Enrolled -->
+      <div id="statCardEnrolled" class="stat-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 hover:border-indigo-500/20 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="flex items-start justify-between relative">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Total Enrolled</p>
+            <p class="text-3xl font-extrabold text-white tabular-nums" id="statEnrolledCount">0</p>
+            <p class="text-xs text-slate-500 mt-1">Active users</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-600/20 border border-indigo-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1.5 text-xs">
+          <span class="text-emerald-400 flex items-center gap-0.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            <span id="statEnrolledTrend">+12%</span>
+          </span>
+          <span class="text-slate-600">vs last month</span>
+        </div>
+      </div>
+
+      <!-- Active Sessions -->
+      <div id="statCardSessions" class="stat-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 hover:border-emerald-500/20 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="flex items-start justify-between relative">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Active Sessions</p>
+            <p class="text-3xl font-extrabold text-white tabular-nums" id="statSessionsCount">0</p>
+            <p class="text-xs text-slate-500 mt-1">Currently live</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500/20 to-green-600/20 border border-emerald-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1.5">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          <span class="text-xs text-emerald-400">Live now</span>
+        </div>
+      </div>
+
+      <!-- Today's Attendance -->
+      <div id="statCardAttendance" class="stat-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 hover:border-violet-500/20 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-violet-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="flex items-start justify-between relative">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Today's Attendance</p>
+            <p class="text-3xl font-extrabold text-white tabular-nums"><span id="statAttendanceRate">0</span><span class="text-xl text-slate-500">%</span></p>
+            <p class="text-xs text-slate-500 mt-1">Present rate</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-600/20 border border-violet-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+          <div id="statAttendanceBar" class="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Pending Alerts -->
+      <div id="statCardAlerts" class="stat-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-5 hover:border-amber-500/20 hover:bg-white/[0.05] transition-all duration-300 overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div class="flex items-start justify-between relative">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Pending Alerts</p>
+            <p class="text-3xl font-extrabold text-white tabular-nums" id="statAlertsCount">0</p>
+            <p class="text-xs text-slate-500 mt-1">Unresolved</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border border-amber-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1.5 text-xs">
+          <span class="text-amber-400">Requires attention</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+      <!-- Attendance Trends Chart -->
+      <div class="lg:col-span-2 glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-white">Attendance Trends</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Last 7 days overview</p>
+          </div>
+          <div class="flex items-center gap-4 text-xs">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+              <span class="text-slate-400">Present</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+              <span class="text-slate-400">Absent</span>
+            </div>
+          </div>
+        </div>
+        <div class="relative h-64 sm:h-72">
+          <canvas id="trendsChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Active Sessions List -->
+      <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-lg font-bold text-white">Active Sessions</h2>
+          <a href="/sessions" id="dashboardViewAllSessions" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all &rarr;</a>
+        </div>
+        <div id="activeSessionsList" class="space-y-3">
+          <!-- Skeleton loading -->
+          <div class="skeleton animate-pulse space-y-3">
+            <div class="h-16 rounded-xl bg-white/[0.04]"></div>
+            <div class="h-16 rounded-xl bg-white/[0.04]"></div>
+            <div class="h-16 rounded-xl bg-white/[0.04]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Table -->
+    <div class="glass-card rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-lg font-bold text-white">Recent Activity</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Latest attendance events</p>
+        </div>
+        <button id="dashboardRefreshActivity" class="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all duration-200" aria-label="Refresh activity">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+      </div>
+      <div class="overflow-x-auto -mx-6 px-6">
+        <table class="table-modern w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/[0.06]">
+              <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Student</th>
+              <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Session</th>
+              <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+              <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Time</th>
+            </tr>
+          </thead>
+          <tbody id="recentActivityBody" class="divide-y divide-white/[0.04]">
+            <!-- Populated by dashboard.js -->
+            <tr>
+              <td colspan="4" class="py-8 text-center text-sm text-slate-600">
+                <div class="flex flex-col items-center gap-2">
+                  <svg class="w-8 h-8 text-slate-700 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                  Loading activity...
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboard.js"></script>
+<%- include('../partials/footer') %>
